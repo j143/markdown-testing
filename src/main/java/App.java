@@ -17,13 +17,7 @@ public class App {
 
     public static void doSomething() throws FileNotFoundException {
         Parser parser = Parser.builder().build();
-        HtmlRenderer renderer = HtmlRenderer.builder()
-                .nodeRendererFactory(new HtmlNodeRendererFactory() {
-                    public NodeRenderer create(HtmlNodeRendererContext context) {
-                        return new IndentedCodeBlockNodeRenderer(context);
-                    }
-                })
-                .build();
+        HtmlRenderer renderer = HtmlRenderer.builder().build();
 
         File file = new File("README.md");
         Scanner scanner = new Scanner(file);
@@ -34,29 +28,5 @@ public class App {
         }
 
         // "<p>Example:</p>\n<pre>code\n</pre>\n"
-    }
-}
-
-class IndentedCodeBlockNodeRenderer implements NodeRenderer {
-
-    private final HtmlWriter html;
-
-    IndentedCodeBlockNodeRenderer(HtmlNodeRendererContext context) {
-        this.html = context.getWriter();
-    }
-
-    public Set<Class<? extends Node>> getNodeTypes() {
-        // Return the node types we want to use this renderer for.
-        return Collections.<Class<? extends Node>>singleton(IndentedCodeBlock.class);
-    }
-
-    public void render(Node node) {
-        // We only handle one type as per getNodeTypes, so we can just cast it here.
-        IndentedCodeBlock codeBlock = (IndentedCodeBlock) node;
-        html.line();
-        html.tag("pre");
-        html.text(codeBlock.getLiteral());
-        html.tag("/pre");
-        html.line();
     }
 }
